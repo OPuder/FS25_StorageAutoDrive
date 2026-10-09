@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="111">
+    <author>OligenOle</author>
+    <version>1.0.4.16</version>
+
+    <title>
+        <de>Storage AutoDrive</de>
+        <en>Storage AutoDrive</en>
+    </title>
+
+    <description>
+        <de><![CDATA[
+StorageAutoDrive verbindet GIANTS ObjectStorage-Palettenlager mit AutoDrive (AD) und Universal Autoload (UAL).
+
+FUNKTION
+- Erkennt relevante AutoDrive-Abholaufträge am Palettenlager.
+- Fordert passende Paletten über das GIANTS ObjectStorage an und ordnet asynchrone Spawns dem jeweiligen Auftrag zu.
+- Stellt die eigenen gespawnten Paletten für Universal Autoload bereit.
+- Führt nicht aufgenommene, eindeutig zugehörige eigene Paletten wieder dem ObjectStorage zu.
+- Verwaltet jeden Abholauftrag in einer getrennten Session.
+
+AUTOdrive UND UNIVERSAL AUTOLOAD
+StorageAutoDrive ist die Verbindung zum Palettenlager – kein Ersatz für AutoDrive oder Universal Autoload. AD und UAL behalten ihre eigene reguläre Logik. StorageAutoDrive beobachtet deren Zustand und greift nicht künstlich in Fahrentscheidungen, Ladezustände, Kapazitäten oder Füllstände ein. Es erzeugt keine künstlichen Beladungsziele und erzwingt weder eine bestimmte Palettenanzahl noch das Weiterfahren eines Fahrzeugs.
+
+BEKANNTE EINSCHRÄNKUNGEN
+- Die prozentuale Beladungsanzeige von AutoDrive kann bei physischen Paletten ungenau sein oder den tatsächlichen Ladezustand nicht korrekt widerspiegeln. Das hängt von der regulären Funktionsweise von AD und UAL ab.
+- Ladeverhalten, Ladegeschwindigkeit, rotierendes Beladen und das Weiterfahren nach dem Beladen richten sich nach der eigenen Logik von AutoDrive und Universal Autoload.
+- StorageAutoDrive kann Einschränkungen oder Ungenauigkeiten der regulären AD-/UAL-Logik nicht zuverlässig korrigieren. Für solche Einschränkungen sowie für Fehler, die durch AD, UAL oder das Basisspiel verursacht werden, übernehmen wir keine Verantwortung.
+
+WICHTIG: PALETTENLAGER NICHT ÜBERFÜLLEN
+Bitte das Palettenlager nicht überfüllen. Überfüllung kann die interne Lagerverwaltung des Spiels beeinträchtigen und zu Problemen bei der Palettenausgabe oder beim Sichern der Paletten führen. Solche Probleme liegen außerhalb des Einflussbereichs von StorageAutoDrive und lassen sich durch diese Mod nicht zuverlässig beheben.
+
+StorageAutoDrive ergänzt ausschließlich die Verbindung zwischen dem GIANTS ObjectStorage, AutoDrive und Universal Autoload. AD und UAL bleiben für ihr eigenes Verhalten verantwortlich.
+]]></de>
+        <en><![CDATA[
+StorageAutoDrive connects GIANTS ObjectStorage pallet storage with AutoDrive (AD) and Universal Autoload (UAL).
+
+FUNCTION
+- Detects relevant AutoDrive pickup jobs at pallet storage.
+- Requests matching pallets through GIANTS ObjectStorage and assigns asynchronous spawns to the corresponding job.
+- Makes its own spawned pallets available for Universal Autoload.
+- Returns uncollected pallets owned by that session to ObjectStorage.
+- Manages each pickup job in an isolated session.
+
+AUTODRIVE AND UNIVERSAL AUTOLOAD
+StorageAutoDrive provides the connection to pallet storage; it does not replace AutoDrive or Universal Autoload. AD and UAL continue to use their own normal logic. StorageAutoDrive observes their state and does not artificially manipulate driving decisions, loading states, capacities or fill levels. It does not create artificial loading targets or force a specific pallet count or make a vehicle drive on.
+
+KNOWN LIMITATIONS
+- AutoDrive's percentage loading display may be inaccurate with physical pallets or may not reflect the actual load correctly. This depends on the normal behavior of AD and UAL.
+- Loading behavior, loading speed, rotating loading and driving on after loading are governed by AutoDrive's and Universal Autoload's own logic.
+- StorageAutoDrive cannot reliably correct limitations or inaccuracies in AD/UAL's normal logic. We are not responsible for such limitations or for issues caused by AD, UAL or the base game.
+
+IMPORTANT: DO NOT OVERFILL PALLET STORAGE
+Please do not overfill pallet storage. Overfilling can interfere with the game's internal storage management and cause problems with pallet output or securing pallets. These issues are outside StorageAutoDrive's control and cannot reliably be fixed by this mod.
+
+StorageAutoDrive only provides the connection between GIANTS ObjectStorage, AutoDrive and Universal Autoload. AD and UAL remain responsible for their own behavior.
+]]></en>
+    </description>
+
+    <iconFilename>icon.png</iconFilename>
+    <multiplayer supported="true" />
+
+    <extraSourceFiles>
+        <sourceFile filename="scripts/StorageAutoDriveEmptyStorage.lua" />
+        <sourceFile filename="scripts/StorageAutoDriveConfig.lua" />
+        <sourceFile filename="scripts/StorageAutoDriveUtils.lua" />
+        <sourceFile filename="scripts/StorageAutoDriveObjects.lua" />
+        <sourceFile filename="scripts/StorageAutoDriveStorage.lua" />
+        <sourceFile filename="scripts/StorageAutoDriveSession.lua" />
+        <sourceFile filename="scripts/Jobs/StorageAutoDriveJobs.lua" />
+        <sourceFile filename="scripts/Jobs/StorageAutoDriveFIFO.lua" />
+        <sourceFile filename="scripts/Vehicle/StorageAutoDriveVehicle.lua" />
+        <sourceFile filename="scripts/Spawn/StorageAutoDriveSpawn.lua" />
+        <sourceFile filename="scripts/Tracking/StorageAutoDriveTracking.lua" />
+        <sourceFile filename="scripts/Cleanup/StorageAutoDriveCleanup.lua" />
+        <sourceFile filename="scripts/Persistence/StorageAutoDrivePersistence.lua" />
+        <sourceFile filename="scripts/Task/StorageAutoDriveTaskState.lua" />
+        <sourceFile filename="scripts/AutoDrive/StorageAutoDriveAutoDrive.lua" />
+        <sourceFile filename="scripts/UAL/StorageAutoDriveUAL.lua" />
+        <sourceFile filename="scripts/StorageAutoDrive.lua" />
+    </extraSourceFiles>
+</modDesc>
