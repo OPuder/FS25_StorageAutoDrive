@@ -1,5 +1,10 @@
 # FS25_StorageAutoDrive
 
+[![Download Latest Release](https://img.shields.io/github/v/release/OPuder/FS25_StorageAutoDrive?label=Download&sort=semver)](https://github.com/OPuder/FS25_StorageAutoDrive/releases/latest)
+
+**[⬇️ Download the latest version](https://github.com/OPuder/FS25_StorageAutoDrive/releases/latest)**
+
+
 **Verbindung zwischen Palettenlager, AutoDrive und Universal Autoload für Farming Simulator 25.**
 
 STORAGEAUTODRIVE ermöglicht es, Paletten aus einem unterstützten Palettenlager für einen AutoDrive-Abholauftrag bereitzustellen. Die Mod übernimmt dabei die Verbindung zwischen dem Lager und den vorhandenen Ladefunktionen von AutoDrive (AD) und Universal Autoload (UAL).
