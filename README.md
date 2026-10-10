@@ -4,13 +4,15 @@
 
 **[⬇️ Download the latest version](https://github.com/OPuder/FS25_StorageAutoDrive/releases/latest)**
 
+Du wolltest schon immer, dass AutoDrive auch Paletten direkt aus dem Palettenlager abholt? Dann bist du hier genau richtig!
 
-**Verbindung zwischen Palettenlager, AutoDrive und Universal Autoload für Farming Simulator 25.**
+Mit STORAGEAUTODRIVE wird genau das möglich! Die Mod verbindet dein unterstütztes Palettenlager mit AutoDrive und Universal Autoload (UAL), damit deine Fahrer Paletten direkt aus dem Lager abholen können – ganz automatisch.
 
-STORAGEAUTODRIVE ermöglicht es, Paletten aus einem unterstützten Palettenlager für einen AutoDrive-Abholauftrag bereitzustellen. Die Mod übernimmt dabei die Verbindung zwischen dem Lager und den vorhandenen Ladefunktionen von AutoDrive (AD) und Universal Autoload (UAL).
+STORAGEAUTODRIVE erkennt passende AutoDrive-Abholaufträge und stellt die angeforderten Paletten aus dem Lager bereit. Universal Autoload übernimmt anschließend das eigentliche Beladen, während AutoDrive seine gewohnten Aufgaben erledigt.
 
-> **Wichtig:** STORAGEAUTODRIVE ersetzt oder verändert weder AutoDrive noch Universal Autoload. Die Mod stellt die Verbindung zum Palettenlager her und überlässt das eigentliche Beladen den vorhandenen Mods.
+Weniger manuelles Palettenhandling, mehr Automatisierung und ein weiterer Schritt zu einem vollautomatischen Hof!
 
+Wichtig: STORAGEAUTODRIVE ersetzt oder verändert weder AutoDrive noch Universal Autoload. Die Mod stellt lediglich die Verbindung zum Palettenlager her und überlässt das Beladen den vorhandenen Mods.
 ## Funktionen
 
 - Erkennt relevante AutoDrive-Abholaufträge am unterstützten Palettenlager.
