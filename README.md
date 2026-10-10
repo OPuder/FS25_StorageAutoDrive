@@ -6,7 +6,7 @@
 
 ## Deutsch
 
-**Du wolltest schon immer, dass AutoDrive auch Paletten direkt aus dem Palettenlager abholt? Dann bist du hier genau richtig!** 🚜📦
+**Du wolltest schon immer, dass AutoDrive auch Paletten direkt aus dem Palettenlager abholt? Dann bist du hier genau richtig!**
 
 Mit **STORAGEAUTODRIVE** wird genau das möglich! Die Mod verbindet dein unterstütztes Palettenlager mit AutoDrive und Universal Autoload (UAL), damit deine Fahrer Paletten direkt aus dem Lager abholen können – ganz automatisch.
 
@@ -105,7 +105,7 @@ STORAGEAUTODRIVE ist die Verbindung zwischen Palettenlager/ObjectStorage, AutoDr
 
 ## English
 
-**Have you always wanted AutoDrive to pick up pallets directly from pallet storage? Then you're in the right place!** 🚜📦
+**Have you always wanted AutoDrive to pick up pallets directly from pallet storage? Then you're in the right place!** 
 
 With **STORAGEAUTODRIVE**, you can connect supported pallet storage to AutoDrive and Universal Autoload (UAL), allowing your drivers to collect pallets directly from storage automatically.
 
