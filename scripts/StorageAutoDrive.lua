@@ -1,9 +1,8 @@
 StorageAutoDrive = {}
-StorageAutoDrive.VERSION = "1.0.4.28"
+StorageAutoDrive.VERSION = "1.0.4.36"
 StorageAutoDrive.updateTimer = 0
 StorageAutoDrive.restoreRetryTimer = 0
 StorageAutoDrive.objectStorageSpawnHookInstalled = false
-StorageAutoDrive.loggingHotkeyPressed = false
 StorageAutoDrive.lastLoggingToggleTime = -10000
 StorageAutoDrive.oldObjectStorageSpawned = nil
 
@@ -26,80 +25,58 @@ function StorageAutoDrive:hookObjectStorageSpawnCallback()
     return true
 end
 
--- Registriert die benannte FS25-Aktion aus modDesc.xml. Dadurch bleibt die
--- Standardbelegung STRG+ALT+F in den Spieleinstellungen frei konfigurierbar.
+-- Registriert ausschließlich die benannte FS25-Aktion aus modDesc.xml.
+-- Die aktive Tastenbelegung kommt vollständig aus den Spieleinstellungen.
+-- Es gibt keinen zusätzlichen, fest codierten Tastatur-Fallback.
 function StorageAutoDrive:registerLoggingAction()
-    if self.loggingActionEventId ~= nil or g_inputBinding == nil or InputAction == nil then
+    if self.loggingActionEventId ~= nil then
+        return true
+    end
+
+    local input = g_inputBinding
+    if input == nil or input.registerActionEvent == nil then
         return false
     end
 
-    local action = InputAction.SAD_TOGGLE_LOGGING
-    if action == nil then
-        if not self.loggingActionWarningShown then
-            print("[StorageAutoDrive][LOGGING] FEHLER: InputAction.SAD_TOGGLE_LOGGING fehlt; Eingabeaktion nicht registriert.")
-            self.loggingActionWarningShown = true
-        end
-        return false
-    end
-
-    local _, eventId = g_inputBinding:registerActionEvent(
-        action, self, self.onToggleLoggingAction, false, true, false, true
+    -- Gleicher Registrierungsweg wie im UniversalConveyorHelper:
+    -- Der Aktionsname aus modDesc.xml wird direkt übergeben.
+    local ok, registered, eventId, collisionAction = pcall(
+        input.registerActionEvent, input, "SAD_TOGGLE_LOGGING", self,
+        StorageAutoDrive.onToggleLoggingAction, false, true, false, true
     )
-    if eventId == nil then
-        if not self.loggingActionWarningShown then
-            print("[StorageAutoDrive][LOGGING] FEHLER: SAD_TOGGLE_LOGGING konnte nicht registriert werden.")
-            self.loggingActionWarningShown = true
+
+    if ok and registered and eventId ~= nil and eventId ~= "" then
+        self.loggingActionEventId = eventId
+        self.loggingActionWarningShown = false
+
+        if input.setActionEventTextVisibility ~= nil then
+            pcall(input.setActionEventTextVisibility, input, eventId, false)
         end
-        return false
+
+        print("[StorageAutoDrive][LOGGING] Log-Umschaltung registriert | Tastenbelegung aus Spieleinstellungen")
+        return true
     end
 
-    self.loggingActionEventId = eventId
-    self.loggingActionWarningShown = false
-
-    if g_inputBinding.setActionEventText ~= nil and g_i18n ~= nil then
-        local text = g_i18n:getText("input_SAD_TOGGLE_LOGGING")
-        g_inputBinding:setActionEventText(eventId, text)
+    if not self.loggingActionWarningShown then
+        print("[StorageAutoDrive][LOGGING] Registrierung fehlgeschlagen"
+            .. " | pcallOk=" .. tostring(ok)
+            .. " | registered=" .. tostring(registered)
+            .. " | eventId=" .. tostring(eventId)
+            .. " | collisionAction=" .. tostring(collisionAction))
+        self.loggingActionWarningShown = true
     end
-    if g_inputBinding.setActionEventTextVisibility ~= nil then
-        g_inputBinding:setActionEventTextVisibility(eventId, true)
-    end
-    if g_inputBinding.setActionEventTextPriority ~= nil and GS_PRIO_HIGH ~= nil then
-        g_inputBinding:setActionEventTextPriority(eventId, GS_PRIO_HIGH)
-    end
-
-    print("[StorageAutoDrive][LOGGING] Konfigurierbare Eingabeaktion registriert (Standard: STRG+ALT+F).")
-    return true
+    return false
 end
 
 function StorageAutoDrive:onToggleLoggingAction(actionName, inputValue)
+    -- Nur auf den aktiven Tastendruck reagieren. Einige Input-Aktionen können
+    -- zusätzlich einen Nullwert beim Loslassen melden.
+    if inputValue ~= nil and tonumber(inputValue) ~= nil and tonumber(inputValue) <= 0 then
+        return
+    end
     -- Reguläre FS25-Aktion: funktioniert auch mit einer in den Einstellungen
     -- neu belegten Taste.
     self:toggleLogging("action")
-end
-
--- Fallback für die nachweislich funktionierende Standardkombination.
--- Falls FS25 sowohl ActionBinding als auch keyEvent für dieselbe Taste auslöst,
--- verhindert toggleLogging() eine doppelte Umschaltung.
-function StorageAutoDrive:keyEvent(unicode, sym, modifier, isDown)
-    if Input == nil or bitAND == nil or modifier == nil or sym ~= Input.KEY_f then
-        return
-    end
-
-    if not isDown then
-        self.loggingHotkeyPressed = false
-        return
-    end
-
-    if self.loggingHotkeyPressed then
-        return
-    end
-
-    local hasCtrl = bitAND(modifier, Input.MOD_CTRL) ~= 0
-    local hasAlt = bitAND(modifier, Input.MOD_ALT) ~= 0
-    if hasCtrl and hasAlt then
-        self.loggingHotkeyPressed = true
-        self:toggleLogging("keyEvent")
-    end
 end
 
 function StorageAutoDrive:toggleLogging(source)
@@ -128,8 +105,9 @@ function StorageAutoDrive:loadMap()
     StorageAutoDriveStorage:scan()
     StorageAutoDrivePersistence:load()
     self:hookObjectStorageSpawnCallback()
-    self:registerLoggingAction()
-    StorageAutoDriveConfig:debug("GENERAL", "StorageAutoDrive 1.0.4.28 geladen | Diagnose-Logs starten AUS; konfigurierbare Eingabeaktion plus Standardtasten-Fallback STRG+ALT+F | AD/UAL read-only | LOGGING_ENABLED=" .. tostring(StorageAutoDriveConfig.LOGGING_ENABLED) .. " | VERBOSE=" .. tostring(StorageAutoDriveConfig.VERBOSE))
+    -- Eingabeaktion erst in update() registrieren. loadMap() läuft während des
+    -- Kartenaufbaus; zu diesem Zeitpunkt kann die InputBinding noch nicht final sein.
+    StorageAutoDriveConfig:debug("GENERAL", "StorageAutoDrive " .. tostring(self.VERSION) .. " geladen | Diagnose-Logs starten AUS; konfigurierbare Eingabeaktion wird nach dem Kartenaufbau registriert | AD/UAL read-only | LOGGING_ENABLED=" .. tostring(StorageAutoDriveConfig.LOGGING_ENABLED) .. " | VERBOSE=" .. tostring(StorageAutoDriveConfig.VERBOSE))
     StorageAutoDriveConfig:debug("GENERAL", "Diagnose-Kategorien aktiv: " .. tostring(StorageAutoDriveConfig.LOGGING_ENABLED and "siehe Config.LOG" or "ALLE AUS"))
     StorageAutoDriveConfig:debugRaw("GENERAL", "LIFECYCLE loadMap END | version=" .. tostring(self.VERSION) .. " | time=" .. tostring(g_currentMission ~= nil and g_currentMission.time))
 end
