@@ -24,6 +24,9 @@ STORAGEAUTODRIVE erkennt passende AutoDrive-Abholaufträge und stellt die angefo
 - Verwaltet die Vorgänge pro Auftrag in getrennten Sessions.
 - Gibt eindeutig von STORAGEAUTODRIVE erzeugte, nicht aufgenommene Paletten nach Möglichkeit an das Lager zurück.
 - Speichert Sessioninformationen, damit offene Aufträge nach dem Laden eines Spielstands wieder aufgenommen werden können.
+- Berücksichtigt beim Lagerabruf passende BigBag- und BigBag-Paletten-Dateipfade, um beide Varianten beim gleichen FillType zu unterstützen.
+
+Die Erkennung weiterer BigBag-Fülltypen muss noch im Spiel getestet werden.
 
 Die tatsächlichen Ladeentscheidungen trifft weiterhin Universal Autoload. STORAGEAUTODRIVE gibt keine feste Paletten-Zielmenge vor und simuliert keinen künstlichen Ladezustand.
 
@@ -57,6 +60,11 @@ Da die Palettenausgabe asynchron erfolgen kann, kann zwischen einer Anforderung 
 5. Starte einen passenden AutoDrive-Abholauftrag am unterstützten Palettenlager.
 
 Es wird empfohlen, vor einem Update eine Sicherung des Spielstands anzulegen.
+### Diagnosemodus
+
+Für die Fehlersuche können Diagnose-Logs direkt im Spiel ein- und ausgeschaltet werden. Sie sind standardmäßig deaktiviert. Die Standard-Tastenkombination ist **STRG + ALT + F**; die Tastenbelegung kann in den Steuerungseinstellungen angepasst werden.
+
+Bei Fehlern bitte die Diagnose aktivieren, das Problem reproduzieren und anschließend die relevante `log.txt` zusammen mit der verwendeten Mod-Version im Issue bereitstellen.
 
 ### Wichtige Hinweise und Einschränkungen
 
@@ -123,6 +131,9 @@ STORAGEAUTODRIVE detects relevant AutoDrive pickup jobs and makes the requested 
 - Keeps each job isolated in its own session.
 - Attempts to return clearly identified session-owned pallets that were not loaded.
 - Saves session information so open jobs can be reconstructed after loading a savegame.
+- Considers matching BigBag and BigBag-pallet file paths when requesting stored pallets, supporting both variants for the same fill type.
+
+Recognition of additional BigBag fill types still requires in-game testing.
 
 Universal Autoload remains responsible for loading pallets. STORAGEAUTODRIVE does not define a fixed target quantity or fabricate a loading state.
 
@@ -156,6 +167,11 @@ Pallet spawning is asynchronous, so a delay between a request and the pallet app
 5. Start a suitable AutoDrive pickup job at supported pallet storage.
 
 Backing up your savegame before updating is recommended.
+### Debug Logging
+
+Diagnostic logging can be enabled or disabled directly in-game. It is disabled by default. The default key combination is **CTRL + ALT + F**, and the key binding can be changed in the control settings.
+
+When reporting an issue, enable diagnostic logging, reproduce the problem, and include the relevant `log.txt` and mod version in the issue report.
 
 ### Important notes and limitations
 
