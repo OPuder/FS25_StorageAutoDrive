@@ -11,35 +11,35 @@ StorageAutoDriveConfig = {
     -- Hauptschalter für alle normalen Diagnose-Logs.
     -- FALSE = normale Diagnose komplett aus. ERROR_LOG bleibt separat.
     LOGGING_ENABLED = false,
-    DEBUG = false,
+    DEBUG = true,
     ERROR_LOG = true, -- Fehler-Log immer aktivieren, auch wenn LOGGING_ENABLED=false
-    HEARTBEAT = false,              -- Alive-Heartbeat ein/aus
+    HEARTBEAT = false,             -- In dieser gezielten ObjectStorage-Diagnose deaktiviert
     HEARTBEAT_INTERVAL_TICKS = 4,  -- 4 x 250 ms = ca. 1 Sekunde
     LOG = {
         CHECK = false,
         GENERAL = false,
-        STORAGE = false,
+        STORAGE = true,
         VEHICLE = false,
-        AUTODRIVE = false,
+        AUTODRIVE = true,
         UAL = false,
-        OBJECTS = false,
-        SPAWN = false,
+        OBJECTS = true,
+        SPAWN = true,
         TRACKING = false,
-        SESSION = false,
-        JOB = false,
-        FIFO = false,
+        SESSION = true,
+        JOB = true,
+        FIFO = true,
         PERSISTENCE = false,
         TASK = false,
-        CLEANUP = false,
-        CALLBACK = false,
+        CLEANUP = true,
+        CALLBACK = true,
         PHASE2 = false,
         UPDATE = false,
-        EMPTY_STORAGE = false,
+        EMPTY_STORAGE = true,
         ADSTATION = false
     },
     -- VERBOSE=true schreibt zusätzlich zyklische Zustands-Snapshots.
     VERBOSE = false,
-    DIAGNOSTIC_RAW = false, -- RAW-Diagnose für UAL/Storage-Objekte aktivieren
+    DIAGNOSTIC_RAW = false, -- RAW-Dauerlogs aus; gezielte ObjectStorage-Snapshots bleiben aktiv
 
     -- Feindiagnose. DEBUG muss zusätzlich aktiv sein.
     -- TRACE_ALL=true aktiviert alle Feindiagnose-Schalter gleichzeitig.
@@ -60,16 +60,16 @@ StorageAutoDriveConfig = {
     TRACE_ALL = false,
     TRACE_FUNCTIONS = false,
     TRACE_DECISIONS = false,
-    TRACE_STATE = false,
+    TRACE_STATE = true,
     TRACE_VALUES = false,
     TRACE_COLLECTIONS = false,
-    TRACE_STORAGE_CALLS = false,
+    TRACE_STORAGE_CALLS = true,
     TRACE_UPDATE_LOOP = false,
     TRACE_VEHICLE_SCAN = false,
     TRACE_UAL_SCAN = false,
-    TRACE_SESSION = false,
+    TRACE_SESSION = true,
     TRACE_PERSISTENCE = false,
-    TRACE_CALLBACKS = false
+    TRACE_CALLBACKS = true
 }
 
 function StorageAutoDriveConfig:debug(category, message)
@@ -181,7 +181,7 @@ function StorageAutoDriveConfig:heartbeat(moduleName, detail)
 end
 
 function StorageAutoDriveConfig:heartbeatSummary()
-    if not self.HEARTBEAT then
+    if not self.LOGGING_ENABLED or not self.HEARTBEAT then
         return
     end
     local counter = self.heartbeatCounter or 0

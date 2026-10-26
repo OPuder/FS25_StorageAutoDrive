@@ -1,3 +1,45 @@
+
+local function logObjectStorageSnapshot(storage, label, targetFilename)
+    local cfg = StorageAutoDriveConfig
+    local spec = storage ~= nil and storage.spec_objectStorage or nil
+    if spec == nil then
+        cfg:debug("OBJECTS", "STORAGE SNAPSHOT | " .. tostring(label) .. " | spec_objectStorage=nil")
+        return
+    end
+
+    local infos = spec.objectInfos or {}
+    cfg:debug("OBJECTS",
+        "STORAGE SNAPSHOT | " .. tostring(label)
+        .. " | storage=" .. tostring(storage)
+        .. " | numStoredObjects=" .. tostring(spec.numStoredObjects)
+        .. " | groupCount=" .. tostring(#infos)
+        .. " | objectInfosUpdateTimer=" .. tostring(spec.objectInfosUpdateTimer)
+        .. " | objectSpawnActive=" .. tostring(spec.objectSpawn ~= nil and spec.objectSpawn.isActive))
+
+    local targetLower = targetFilename ~= nil and string.lower(tostring(targetFilename)) or nil
+    for index, info in ipairs(infos) do
+        local objects = info ~= nil and info.objects or nil
+        local first = objects ~= nil and objects[1] or nil
+        local filename = StorageAutoDriveUtils:getObjectFilename(first)
+        local matchesTarget = false
+        if targetLower ~= nil and filename ~= nil then
+            local lowerFilename = string.lower(tostring(filename))
+            matchesTarget = lowerFilename == targetLower
+                or string.sub(lowerFilename, -#targetLower) == targetLower
+                or string.sub(targetLower, -#lowerFilename) == lowerFilename
+        end
+        cfg:debug("OBJECTS",
+            "STORAGE SNAPSHOT GROUP | " .. tostring(label)
+            .. " | group=" .. tostring(index)
+            .. " | numObjects=" .. tostring(info ~= nil and info.numObjects)
+            .. " | objectsLength=" .. tostring(objects ~= nil and #objects or nil)
+            .. " | firstObject=" .. tostring(first ~= nil and first.id)
+            .. " | fillType=" .. tostring(StorageAutoDriveUtils:getObjectFillType(first))
+            .. " | filename=" .. tostring(filename)
+            .. " | targetMatch=" .. tostring(matchesTarget))
+    end
+end
+
 local function getStorageRequestDiagnostics(storage, objectInfoIndex)
     local spec = storage ~= nil and storage.spec_objectStorage or nil
     if spec == nil then
@@ -112,6 +154,25 @@ function StorageAutoDriveObjects:findObjectInfoForFillType(storage, fillTypeInde
                 local value = fillType[fieldName]
                 if value ~= nil and tostring(value) ~= "" then
                     table.insert(wantedFiles, tostring(value))
+
+                    -- BigBag und BigBagPallet sind zwei Objektvarianten desselben
+                    -- FillTypes. Ergaenze nur den exakt passenden Gegenpfad,
+                    -- damit beide Varianten gefunden werden, ohne das Objekt umzuschreiben.
+                    local lowerValue = string.lower(tostring(value))
+                    local alternateValue = nil
+                    if string.find(lowerValue, "/bigbagpallet/", 1, true) ~= nil then
+                        alternateValue = string.gsub(tostring(value), "/bigBagPallet/", "/bigBag/")
+                        alternateValue = string.gsub(alternateValue, "bigBagPallet_", "bigBag_")
+                    elseif string.find(lowerValue, "/bigbag/", 1, true) ~= nil
+                        and string.find(lowerValue, "/bigbagpallet/", 1, true) == nil then
+                        alternateValue = string.gsub(tostring(value), "/bigBag/", "/bigBagPallet/")
+                        alternateValue = string.gsub(alternateValue, "bigBag_", "bigBagPallet_")
+                    end
+                    if alternateValue ~= nil and alternateValue ~= tostring(value) then
+                        table.insert(wantedFiles, alternateValue)
+                        cfg:debug("OBJECTS", "Alternative BigBag-Datei " .. tostring(alternateValue))
+                    end
+
                     cfg:debug("OBJECTS", "FillType-Datei " .. fieldName .. "=" .. tostring(value))
                 end
             end
@@ -142,6 +203,7 @@ function StorageAutoDriveObjects:findObjectInfoForFillType(storage, fillTypeInde
     end
 
     cfg:debug("OBJECTS", "Kein Objekt für FillType " .. tostring(wantedName) .. " gefunden.")
+    logObjectStorageSnapshot(storage, "SEARCH_MISS fillType=" .. tostring(fillTypeIndex) .. "/" .. tostring(wantedName))
     return nil, nil
 end
 
@@ -172,6 +234,37 @@ function StorageAutoDriveObjects:removeObjectFromStorage(storage, objectInfoInde
     return true
 end
 
+function StorageAutoDriveObjects:markObjectStorageInfosDirty(storage, reason)
+    local cfg = StorageAutoDriveConfig
+    if storage == nil then
+        cfg:debug("OBJECTS", "OBJECT STORAGE REFRESH SKIPPED | storage=nil | reason=" .. tostring(reason))
+        return false
+    end
+
+    if storage.setObjectStorageObjectInfosDirty == nil then
+        cfg:debug("OBJECTS", "OBJECT STORAGE REFRESH UNAVAILABLE | setObjectStorageObjectInfosDirty fehlt | reason=" .. tostring(reason))
+        return false
+    end
+
+    local spec = storage.spec_objectStorage
+    cfg:debug("OBJECTS", "OBJECT STORAGE REFRESH REQUEST | reason=" .. tostring(reason)
+        .. " | numStoredObjects=" .. tostring(spec ~= nil and spec.numStoredObjects)
+        .. " | objectInfosUpdateTimerBefore=" .. tostring(spec ~= nil and spec.objectInfosUpdateTimer))
+
+    local ok, result = pcall(function()
+        return storage:setObjectStorageObjectInfosDirty()
+    end)
+    if not ok then
+        cfg:error("ObjectStorage-Bestandsaktualisierung konnte nicht angefordert werden: " .. tostring(result))
+        return false
+    end
+
+    cfg:debug("OBJECTS", "OBJECT STORAGE REFRESH MARKED DIRTY | reason=" .. tostring(reason)
+        .. " | objectInfosUpdateTimerAfter=" .. tostring(spec ~= nil and spec.objectInfosUpdateTimer)
+        .. " | update erfolgt durch GIANTS ObjectStorage")
+    return true
+end
+
 function StorageAutoDriveObjects:returnObjectToStorage(storage, object)
     StorageAutoDriveConfig:traceFunction("GENERAL", "StorageAutoDriveObjects:returnObjectToStorage")
     local cfg = StorageAutoDriveConfig
@@ -195,6 +288,9 @@ function StorageAutoDriveObjects:returnObjectToStorage(storage, object)
         end
     end
 
+    local returnedFilename = StorageAutoDriveUtils:getObjectFilename(object)
+    cfg:debug("OBJECTS", "RETURN BEGIN | object=" .. tostring(object and object.id) .. " | filename=" .. tostring(returnedFilename))
+    logObjectStorageSnapshot(storage, "BEFORE_RETURN object=" .. tostring(object and object.id), returnedFilename)
     cfg:traceStorage("BEFORE GIANTS addObjectToObjectStorage | storage=" .. tostring(storage) .. " | object=" .. tostring(object and object.id) .. " | force=false")
     local ok, result = pcall(function()
         return storage:addObjectToObjectStorage(object, false)
@@ -206,6 +302,7 @@ function StorageAutoDriveObjects:returnObjectToStorage(storage, object)
     end
 
     cfg:traceStorage("ADD RESULT | storage=" .. tostring(storage) .. " | object=" .. tostring(object and object.id) .. " | pcallOK=" .. tostring(ok) .. " | return=" .. tostring(result))
-    cfg:debug("OBJECTS", "Eigene Ueberhangspalette ins ObjectStorage zurueckgefuehrt | Objekt=" .. tostring(object.id))
+    cfg:debug("OBJECTS", "RETURN CALL FINISHED | object=" .. tostring(object.id) .. " | filename=" .. tostring(returnedFilename) .. " | pcallOK=" .. tostring(ok) .. " | return=" .. tostring(result))
+    logObjectStorageSnapshot(storage, "AFTER_RETURN_CALL object=" .. tostring(object and object.id), returnedFilename)
     return true
 end

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="111">
     <author>OligenOle</author>
-    <version>1.0.4.16</version>
+    <version>1.0.4.29</version>
 
     <title>
         <de>Storage AutoDrive</de>
@@ -17,6 +17,7 @@ FUNKTION
 - Fordert passende Paletten über das GIANTS ObjectStorage an und ordnet asynchrone Spawns dem jeweiligen Auftrag zu.
 - Stellt die eigenen gespawnten Paletten für Universal Autoload bereit.
 - Führt nicht aufgenommene, eindeutig zugehörige eigene Paletten wieder dem ObjectStorage zu.
+- Markiert nach Cleanup mit Rückführung die ObjectStorage-Bestandsinfos zur Aktualisierung.
 - Verwaltet jeden Abholauftrag in einer getrennten Session.
 
 AUTOdrive UND UNIVERSAL AUTOLOAD
@@ -40,6 +41,7 @@ FUNCTION
 - Requests matching pallets through GIANTS ObjectStorage and assigns asynchronous spawns to the corresponding job.
 - Makes its own spawned pallets available for Universal Autoload.
 - Returns uncollected pallets owned by that session to ObjectStorage.
+- Marks ObjectStorage inventory information dirty after cleanup returns pallets, so GIANTS can rebuild the grouped inventory and visuals.
 - Manages each pickup job in an isolated session.
 
 AUTODRIVE AND UNIVERSAL AUTOLOAD
@@ -59,6 +61,18 @@ StorageAutoDrive only provides the connection between GIANTS ObjectStorage, Auto
 
     <iconFilename>icon.png</iconFilename>
     <multiplayer supported="true" />
+
+    <l10n filenamePrefix="translations/translation" />
+
+    <actions>
+        <action name="SAD_TOGGLE_LOGGING" category="ONFOOT VEHICLE" axisType="HALF" ignoreComboMask="false" />
+    </actions>
+
+    <inputBinding>
+        <actionBinding action="SAD_TOGGLE_LOGGING">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_lalt KEY_f" />
+        </actionBinding>
+    </inputBinding>
 
     <extraSourceFiles>
         <sourceFile filename="scripts/StorageAutoDriveEmptyStorage.lua" />

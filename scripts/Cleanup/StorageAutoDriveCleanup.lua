@@ -32,6 +32,14 @@ function StorageAutoDriveCleanup:finish(session, reason)
         "Session-Cleanup | eigene Ueberhaenge zurueckgefuehrt=" .. tostring(returned)
         .. " | fehlgeschlagen=" .. tostring(failed))
 
+    -- GIANTS aktualisiert objectInfos und die Lager-Visuals zeitversetzt,
+    -- wenn setObjectStorageObjectInfosDirty() aufgerufen wird. Nach mehreren
+    -- Rueckfuehrungen reicht eine Anforderung am Ende des Cleanup.
+    if returned > 0 then
+        StorageAutoDriveObjects:markObjectStorageInfosDirty(session.storage,
+            "Cleanup Job=" .. tostring(session.job and session.job.id) .. " returned=" .. tostring(returned))
+    end
+
     -- Erst nachdem die eigenen Objekte verarbeitet wurden, werden die
     -- Runtime-Referenzen der Session freigegeben.
     session.pendingObject = nil
