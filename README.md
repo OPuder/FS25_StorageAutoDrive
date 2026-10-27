@@ -6,11 +6,11 @@
 
 ## Deutsch
 
-**Du wolltest schon immer, dass AutoDrive auch Paletten direkt aus dem Palettenlager abholt? Dann bist du hier genau richtig!**
+**Du möchtest, dass AutoDrive Paletten und Ballen direkt aus einem unterstützten Lager abholt? Dann bist du hier genau richtig!**
 
-Mit **STORAGEAUTODRIVE** wird genau das möglich! Die Mod verbindet dein unterstütztes Palettenlager mit AutoDrive und Universal Autoload (UAL), damit deine Fahrer Paletten direkt aus dem Lager abholen können – ganz automatisch.
+Mit **STORAGEAUTODRIVE** verbindet sich ein unterstütztes Paletten- beziehungsweise Ballenlager mit AutoDrive und Universal Autoload (UAL). So können passende Lagerobjekte im Rahmen eines echten AutoDrive-Abholauftrags bereitgestellt werden.
 
-STORAGEAUTODRIVE erkennt passende AutoDrive-Abholaufträge und stellt die angeforderten Paletten aus dem Lager bereit. Universal Autoload übernimmt anschließend das eigentliche Beladen, während AutoDrive seine gewohnten Aufgaben erledigt.
+STORAGEAUTODRIVE erkennt passende AutoDrive-Abholaufträge und stellt geeignete, tatsächlich im Lager vorhandene Objekte bereit. Universal Autoload übernimmt anschließend das eigentliche Beladen, während AutoDrive seine gewohnten Aufgaben erledigt.
 
 **Weniger manuelles Palettenhandling, mehr Automatisierung und ein weiterer Schritt zu einem vollautomatischen Hof!**
 
@@ -18,15 +18,18 @@ STORAGEAUTODRIVE erkennt passende AutoDrive-Abholaufträge und stellt die angefo
 
 ### Funktionen
 
-- Erkennt relevante AutoDrive-Abholaufträge am unterstützten Palettenlager.
-- Fordert passende Paletten über die Lagerfunktionen an und stellt sie für UAL bereit.
+- Erkennt relevante AutoDrive-Abholaufträge an unterstützten Paletten- und Ballenlagern.
+- Fordert passende Lagerobjekte über die vorgesehenen GIANTS-ObjectStorage-Funktionen an und stellt sie für UAL bereit.
 - Berücksichtigt zeitversetzte beziehungsweise asynchrone Palettenausgaben.
 - Verwaltet die Vorgänge pro Auftrag in getrennten Sessions.
 - Gibt eindeutig von STORAGEAUTODRIVE erzeugte, nicht aufgenommene Paletten nach Möglichkeit an das Lager zurück.
 - Speichert Sessioninformationen, damit offene Aufträge nach dem Laden eines Spielstands wieder aufgenommen werden können.
 - Berücksichtigt beim Lagerabruf passende BigBag- und BigBag-Paletten-Dateipfade, um beide Varianten beim gleichen FillType zu unterstützen.
+- Unterstützt die Erkennung registrierter Ballentypen anhand der verfügbaren Objekt- und Balleninformationen, einschließlich Rund- und Quaderballen.
+- Ergänzt die AutoDrive-Auftragsauswahl derzeit um die Varianten **Stroh – Rundballen** und **Stroh – Quaderballen**.
+- Berücksichtigt bei der Ballensuche den tatsächlichen Fülltyp und die konkrete Ballendatei, soweit die Lagerinformationen diese zuverlässig bereitstellen.
 
-Die Erkennung weiterer BigBag-Fülltypen muss noch im Spiel getestet werden.
+Die Ballenunterstützung wird schrittweise getestet. Verfügbarkeit und Ausgabe hängen davon ab, ob der konkrete Ballentyp im verwendeten Lager tatsächlich vorhanden, unterstützt und ausgebbar ist. Nicht jede Ballenart oder Mod-Ballen-XML ist automatisch mit jedem Lager kompatibel.
 
 Die tatsächlichen Ladeentscheidungen trifft weiterhin Universal Autoload. STORAGEAUTODRIVE gibt keine feste Paletten-Zielmenge vor und simuliert keinen künstlichen Ladezustand.
 
@@ -35,17 +38,17 @@ Die tatsächlichen Ladeentscheidungen trifft weiterhin Universal Autoload. STORA
 - Farming Simulator 25
 - AutoDrive für Farming Simulator 25
 - Universal Autoload für Farming Simulator 25
-- Ein unterstütztes Palettenlager, das Paletten über die GIANTS-ObjectStorage-Funktionen ausgeben kann
+- Ein unterstütztes Paletten- oder Ballenlager, das die jeweiligen Objekte über die GIANTS-ObjectStorage-Funktionen ausgeben kann
 
 Die benötigten Mods müssen installiert und im Spiel aktiviert sein. Die Kompatibilität kann je nach Spiel-, Mod- und Lager-Version variieren.
 
 ### Ablauf
 
-1. AutoDrive fährt einen Abholauftrag am Palettenlager an.
-2. STORAGEAUTODRIVE erkennt den relevanten Auftrag.
-3. Die Mod fordert passende Paletten aus dem Lager an.
-4. Sobald das Spiel die Paletten tatsächlich erzeugt hat, ordnet STORAGEAUTODRIVE sie der richtigen Auftragssession zu.
-5. Universal Autoload erkennt und lädt die bereitgestellten Paletten selbstständig.
+1. AutoDrive fährt einen passenden Abholauftrag am unterstützten Lager an.
+2. STORAGEAUTODRIVE erkennt den relevanten Auftrag und wertet die gewählte Auswahl aus.
+3. Die Mod prüft den Lagerbestand und fordert passende, tatsächlich ausgebbare Objekte an.
+4. Sobald das Spiel ein Objekt tatsächlich erzeugt hat, ordnet STORAGEAUTODRIVE es der richtigen Auftragssession zu.
+5. Universal Autoload erkennt und lädt die bereitgestellten Objekte selbstständig.
 6. STORAGEAUTODRIVE wartet auf die erforderlichen Vorgänge und kümmert sich nur um eindeutig eigene, nicht aufgenommene Paletten.
 7. Die Session wird abgeschlossen, sobald keine notwendigen eigenen Vorgänge mehr offen sind.
 
@@ -113,11 +116,11 @@ STORAGEAUTODRIVE ist die Verbindung zwischen Palettenlager/ObjectStorage, AutoDr
 
 ## English
 
-**Have you always wanted AutoDrive to pick up pallets directly from pallet storage? Then you're in the right place!** 
+**Want AutoDrive to collect pallets and bales directly from supported storage? Then you're in the right place!** 
 
-With **STORAGEAUTODRIVE**, you can connect supported pallet storage to AutoDrive and Universal Autoload (UAL), allowing your drivers to collect pallets directly from storage automatically.
+With **STORAGEAUTODRIVE**, supported pallet or bale storage can be connected to AutoDrive and Universal Autoload (UAL), allowing suitable stored objects to be made available for real AutoDrive pickup jobs.
 
-STORAGEAUTODRIVE detects relevant AutoDrive pickup jobs and makes the requested pallets available from storage. Universal Autoload then handles the actual loading while AutoDrive continues to do its usual job.
+STORAGEAUTODRIVE detects relevant AutoDrive pickup jobs and makes suitable objects that actually exist in storage available. Universal Autoload handles the actual loading while AutoDrive continues to do its usual job.
 
 **Less manual pallet handling, more automation, and another step toward a fully automated farm!**
 
@@ -125,15 +128,18 @@ STORAGEAUTODRIVE detects relevant AutoDrive pickup jobs and makes the requested 
 
 ### Features
 
-- Detects relevant AutoDrive pickup jobs at supported pallet storage.
-- Requests suitable pallets through the storage functions and makes them available to UAL.
+- Detects relevant AutoDrive pickup jobs at supported pallet and bale storage.
+- Requests suitable stored objects through the intended GIANTS ObjectStorage functions and makes them available to UAL.
 - Handles delayed and asynchronous pallet spawning.
 - Keeps each job isolated in its own session.
 - Attempts to return clearly identified session-owned pallets that were not loaded.
 - Saves session information so open jobs can be reconstructed after loading a savegame.
 - Considers matching BigBag and BigBag-pallet file paths when requesting stored pallets, supporting both variants for the same fill type.
+- Supports recognition of registered bale types using the available object and bale information, including round and square bales.
+- Currently adds **Straw – Round Bale** and **Straw – Square Bale** to the AutoDrive pickup selection.
+- Uses the actual fill type and specific bale file for bale matching where the storage information exposes them reliably.
 
-Recognition of additional BigBag fill types still requires in-game testing.
+Bale support is being tested incrementally. Availability and output depend on whether the specific bale type is present in, supported by, and retrievable from the selected storage. Not every bale type or modded bale XML is automatically compatible with every storage system.
 
 Universal Autoload remains responsible for loading pallets. STORAGEAUTODRIVE does not define a fixed target quantity or fabricate a loading state.
 
@@ -142,17 +148,17 @@ Universal Autoload remains responsible for loading pallets. STORAGEAUTODRIVE doe
 - Farming Simulator 25
 - AutoDrive for Farming Simulator 25
 - Universal Autoload for Farming Simulator 25
-- Supported pallet storage that can release pallets through GIANTS ObjectStorage functionality
+- Supported pallet or bale storage that can release the relevant objects through GIANTS ObjectStorage functionality
 
 The required mods must be installed and enabled in-game. Compatibility may vary depending on the game, mod and storage versions.
 
 ### How it works
 
-1. AutoDrive approaches a pickup job at the pallet storage.
-2. STORAGEAUTODRIVE detects the relevant job.
-3. The mod requests suitable pallets from storage.
-4. When the game actually spawns a pallet, STORAGEAUTODRIVE associates it with the correct job session.
-5. Universal Autoload detects and loads the available pallets itself.
+1. AutoDrive approaches a suitable pickup job at supported storage.
+2. STORAGEAUTODRIVE detects the relevant job and reads the selected option.
+3. The mod checks storage and requests suitable objects that can actually be retrieved.
+4. When the game actually spawns an object, STORAGEAUTODRIVE associates it with the correct job session.
+5. Universal Autoload detects and loads the available objects itself.
 6. STORAGEAUTODRIVE waits for required operations and handles only clearly identified session-owned pallets that were not loaded.
 7. The session finishes when no required session-owned operations remain.
 
