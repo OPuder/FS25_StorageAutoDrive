@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="111">
     <author>OligenOle</author>
-    <version>1.0.4.36</version>
+    <version>1.0.4.51</version>
 
     <title>
         <de>Storage AutoDrive</de>
@@ -13,7 +13,9 @@
 StorageAutoDrive verbindet GIANTS ObjectStorage-Palettenlager mit AutoDrive (AD) und Universal Autoload (UAL).
 
 FUNKTION
-- Erkennt relevante AutoDrive-Abholaufträge am Palettenlager.
+- Erkennt relevante AutoDrive-Abholaufträge am Ballen- und Palettenlager.
+- Erweitert die AD-Auftragsauswahl dynamisch anhand registrierter GIANTS-Ballentypen um Fülltyp, Form und – sofern unterstützt – Folienstatus.
+- Sucht vorhandene Ballen im ObjectStorage anhand registrierter XML-Datei, Fülltyp, Rund-/Quaderform und verfügbarer Folieninformation.
 - Fordert passende Paletten über das GIANTS ObjectStorage an und ordnet asynchrone Spawns dem jeweiligen Auftrag zu.
 - Stellt die eigenen gespawnten Paletten für Universal Autoload bereit.
 - Führt nicht aufgenommene, eindeutig zugehörige eigene Paletten wieder dem ObjectStorage zu.
@@ -59,7 +61,7 @@ StorageAutoDrive only provides the connection between GIANTS ObjectStorage, Auto
 ]]></en>
     </description>
 
-    <iconFilename>icon.png</iconFilename>
+    <iconFilename>icon.dds</iconFilename>
     <multiplayer supported="true" />
 
     <l10n filenamePrefix="translations/translation" />
@@ -78,6 +80,9 @@ StorageAutoDrive only provides the connection between GIANTS ObjectStorage, Auto
         <sourceFile filename="scripts/StorageAutoDriveEmptyStorage.lua" />
         <sourceFile filename="scripts/StorageAutoDriveConfig.lua" />
         <sourceFile filename="scripts/StorageAutoDriveUtils.lua" />
+        <sourceFile filename="scripts/Bales/StorageAutoDriveBaleObjects.lua" />
+        <sourceFile filename="scripts/AutoDriveExtension/StorageAutoDriveADBaleSelection.lua" />
+        <sourceFile filename="scripts/AutoDriveExtension/StorageAutoDriveADBaleIntegration.lua" />
         <sourceFile filename="scripts/StorageAutoDriveObjects.lua" />
         <sourceFile filename="scripts/StorageAutoDriveStorage.lua" />
         <sourceFile filename="scripts/StorageAutoDriveSession.lua" />

@@ -22,7 +22,9 @@ function StorageAutoDriveJobs:create(vehicle, storage)
     self.nextId = self.nextId + 1
     local trailer = StorageAutoDriveUAL:findTrailer(vehicle)
     local orderFillType, rawFillType, isAllOrder = StorageAutoDriveAutoDrive:getOrderFillType(vehicle)
-    StorageAutoDriveConfig:debugRaw("JOB", "CREATE DETAILS | vehicle=" .. tostring(vehicle.id) .. " | uid=" .. tostring(vehicleKey(vehicle)) .. " | storage=" .. tostring(StorageAutoDriveUtils:getStorageName(storage)) .. " | trailer=" .. tostring(trailer and trailer.id) .. " | rawFillType=" .. tostring(rawFillType) .. " | orderFillType=" .. tostring(orderFillType) .. " | orderMode=" .. tostring(isAllOrder and "ALL" or "SPECIFIC") .. " | mode=" .. tostring(StorageAutoDriveAutoDrive:getTaskModeName(vehicle)))
+    local baleSelectionId = StorageAutoDriveADBaleSelection:getForVehicle(vehicle)
+    local baleSelection = StorageAutoDriveADBaleSelection:getEntryForId(baleSelectionId)
+    StorageAutoDriveConfig:debugRaw("JOB", "CREATE DETAILS | vehicle=" .. tostring(vehicle.id) .. " | uid=" .. tostring(vehicleKey(vehicle)) .. " | storage=" .. tostring(StorageAutoDriveUtils:getStorageName(storage)) .. " | trailer=" .. tostring(trailer and trailer.id) .. " | rawFillType=" .. tostring(rawFillType) .. " | orderFillType=" .. tostring(orderFillType) .. " | orderMode=" .. tostring(isAllOrder and "ALL" or "SPECIFIC") .. " | baleSelection=" .. tostring(baleSelection and (baleSelection.fillTypeName .. "/" .. baleSelection.shape .. "/wrap=" .. tostring(baleSelection.wrapRequirement)) or "none") .. " | mode=" .. tostring(StorageAutoDriveAutoDrive:getTaskModeName(vehicle)))
     local job = {
         id=self.nextId,
         vehicle=vehicle,
@@ -31,6 +33,8 @@ function StorageAutoDriveJobs:create(vehicle, storage)
         trailer=trailer,
         fillType=orderFillType,
         requestedFillType=rawFillType,
+        baleSelectionId=baleSelectionId,
+        baleSelection=baleSelection,
         isAllOrder=isAllOrder,
         state="QUEUED",
         spawned=0,
@@ -89,6 +93,7 @@ function StorageAutoDriveJobs:log(job, reason)
         .. " | vehicle=" .. tostring(job.vehicleUniqueId)
         .. " | fillType=" .. tostring(job.fillType)
         .. " | requestedFillType=" .. tostring(job.requestedFillType)
+        .. " | baleSelection=" .. tostring(job.baleSelection and (job.baleSelection.fillTypeName .. "/" .. job.baleSelection.shape) or "none")
         .. " | orderMode=" .. tostring(job.isAllOrder == true and "ALL" or "SPECIFIC")
         .. " | spawned=" .. tostring(job.spawned)
         .. " | reason=" .. tostring(reason))

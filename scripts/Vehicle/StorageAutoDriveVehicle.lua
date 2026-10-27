@@ -37,7 +37,6 @@ end
 
 function StorageAutoDriveVehicle:activateNext()
     StorageAutoDriveConfig:traceFunction("VEHICLE", "StorageAutoDriveVehicle:activateNext")
-    StorageAutoDriveConfig:debug("FIFO", "activateNext() | active=" .. tostring(StorageAutoDriveFIFO.active ~= nil) .. " | queue=" .. tostring(#StorageAutoDriveFIFO.queue))
     local job=StorageAutoDriveFIFO:promote()
     if job == nil then return end
     local session=StorageAutoDriveSession:new(job)

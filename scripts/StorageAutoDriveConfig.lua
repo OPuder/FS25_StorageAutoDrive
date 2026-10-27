@@ -35,7 +35,7 @@ StorageAutoDriveConfig = {
         PHASE2 = false,
         UPDATE = false,
         EMPTY_STORAGE = true,
-        ADSTATION = false
+        ADSTATION = true
     },
     -- VERBOSE=true schreibt zusätzlich zyklische Zustands-Snapshots.
     VERBOSE = false,

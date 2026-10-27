@@ -2,6 +2,9 @@ StorageAutoDriveSpawn = {}
 
 function StorageAutoDriveSpawn:findObject(job)
     StorageAutoDriveConfig:traceFunction("SPAWN", "StorageAutoDriveSpawn:findObject")
+    if job ~= nil and job.baleSelection ~= nil then
+        return StorageAutoDriveObjects:findObjectInfoForBaleSelection(job.storage, job.baleSelection)
+    end
     return StorageAutoDriveObjects:findObjectInfoForFillType(job.storage, job.fillType)
 end
 
@@ -73,7 +76,7 @@ function StorageAutoDriveSpawn:startNext(session)
     local info, index = self:findObject(session.job)
     local requestedFillType = session.job and session.job.requestedFillType or nil
     local orderMode = session.job and session.job.isAllOrder == true and "ALL" or "SPECIFIC"
-    StorageAutoDriveConfig:debug("SPAWN", "Storage-Suche | mode=" .. tostring(orderMode) .. " | requestedFillType=" .. tostring(requestedFillType) .. " | searchFillType=" .. tostring(session.job and session.job.fillType) .. " | Gruppe=" .. tostring(index) .. " | Anzahl=" .. tostring(info and info.numObjects))
+    StorageAutoDriveConfig:debug("SPAWN", "Storage-Suche | mode=" .. tostring(orderMode) .. " | requestedFillType=" .. tostring(requestedFillType) .. " | searchFillType=" .. tostring(session.job and session.job.fillType) .. " | baleSelection=" .. tostring(session.job and session.job.baleSelection and (session.job.baleSelection.fillTypeName .. "/" .. session.job.baleSelection.shape .. "/wrap=" .. tostring(session.job.baleSelection.wrapRequirement)) or "none") .. " | Gruppe=" .. tostring(index) .. " | Anzahl=" .. tostring(info and info.numObjects))
     if info == nil or index == nil then
         StorageAutoDriveConfig:traceDecision("SPAWN", "NO_STORAGE_OBJECT")
         StorageAutoDriveEmptyStorage:begin(session, "Lager liefert aktuell keine passende Palette")

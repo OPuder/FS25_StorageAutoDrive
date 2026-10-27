@@ -34,7 +34,6 @@ end
 
 function StorageAutoDriveFIFO:promote()
     StorageAutoDriveConfig:traceFunction("JOB", "StorageAutoDriveFIFO:promote")
-    StorageAutoDriveConfig:debug("FIFO", "PROMOTE | active=" .. tostring(self.active ~= nil) .. " | queue=" .. tostring(#self.queue))
     if self.active ~= nil then return self.active end
     StorageAutoDriveConfig:debugRaw("FIFO", "PROMOTE QUEUE CONTENTS | count=" .. tostring(#self.queue) .. " | active=" .. tostring(self.active and self.active.id))
     while #self.queue > 0 do

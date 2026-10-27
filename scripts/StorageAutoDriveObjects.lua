@@ -207,6 +207,42 @@ function StorageAutoDriveObjects:findObjectInfoForFillType(storage, fillTypeInde
     return nil, nil
 end
 
+function StorageAutoDriveObjects:findObjectInfoForBaleSelection(storage, selection)
+    StorageAutoDriveConfig:traceFunction("GENERAL", "StorageAutoDriveObjects:findObjectInfoForBaleSelection")
+    local cfg = StorageAutoDriveConfig
+    if selection == nil then return nil, nil end
+    local infos = self:getObjectInfos(storage)
+    if infos == nil then return nil, nil end
+
+    -- ObjectStorage stores abstract objects. Their XML filename is the reliable
+    -- identity; fill type and shape are resolved against GIANTS' registered BaleManager.
+    for index, info in ipairs(infos) do
+        if info ~= nil and (info.numObjects or 0) > 0 and type(info.objects) == "table" then
+            -- GIANTS removes the first abstract object from the selected group.
+            -- Match that exact object, never a later item in the same group.
+            local abstractObject = info.objects[1]
+            if abstractObject ~= nil then
+                local matches, reason = StorageAutoDriveBaleObjects:matchesSelection(abstractObject, selection)
+                if matches then
+                    cfg:debug("OBJECTS", "BALE MATCH | group=" .. tostring(index)
+                        .. " | fillType=" .. tostring(selection.fillTypeName)
+                        .. " | shape=" .. tostring(selection.shape)
+                        .. " | wrap=" .. tostring(selection.wrapRequirement)
+                        .. " | filename=" .. tostring(StorageAutoDriveUtils:getObjectFilename(abstractObject)))
+                    return info, index
+                end
+                cfg:debug("OBJECTS", "BALE CANDIDATE SKIP | group=" .. tostring(index)
+                    .. " | filename=" .. tostring(StorageAutoDriveUtils:getObjectFilename(abstractObject))
+                    .. " | reason=" .. tostring(reason))
+            end
+        end
+    end
+    cfg:debug("OBJECTS", "Kein passender Ballen | fillType=" .. tostring(selection.fillTypeName)
+        .. " | shape=" .. tostring(selection.shape) .. " | wrap=" .. tostring(selection.wrapRequirement))
+    logObjectStorageSnapshot(storage, "BALE_SEARCH_MISS " .. tostring(selection.fillTypeName) .. "/" .. tostring(selection.shape))
+    return nil, nil
+end
+
 function StorageAutoDriveObjects:removeObjectFromStorage(storage, objectInfoIndex)
     StorageAutoDriveConfig:traceFunction("GENERAL", "StorageAutoDriveObjects:removeObjectFromStorage")
     local cfg = StorageAutoDriveConfig

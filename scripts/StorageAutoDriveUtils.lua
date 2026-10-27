@@ -110,23 +110,8 @@ end
 
 function StorageAutoDriveUtils:getObjectType(object)
     StorageAutoDriveConfig:traceFunction("GENERAL", "StorageAutoDriveUtils:getObjectType")
-    if object == nil then return "UNKNOWN" end
-    local realObject = self:getRealObject(object)
-    if realObject.isBale == true then return "BALE" end
-    if realObject.getIsBale ~= nil then
-        local ok, result = pcall(function() return realObject:getIsBale() end)
-        if ok and result == true then return "BALE" end
-    end
-    if realObject.isPallet == true then return "PALLET" end
-    if realObject.getIsPallet ~= nil then
-        local ok, result = pcall(function() return realObject:getIsPallet() end)
-        if ok and result == true then return "PALLET" end
-    end
-    local filename = self:getObjectFilename(realObject)
-    if filename ~= nil then
-        local lower = string.lower(filename)
-        if string.find(lower, "bale", 1, true) ~= nil then return "BALE" end
-        if string.find(lower, "pallet", 1, true) ~= nil then return "PALLET" end
+    if StorageAutoDriveBaleObjects ~= nil then
+        return StorageAutoDriveBaleObjects:getObjectType(object)
     end
     return "UNKNOWN"
 end

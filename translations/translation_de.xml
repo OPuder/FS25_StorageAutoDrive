@@ -2,5 +2,5 @@
 <l10n>
     <texts>
         <text name="input_SAD_TOGGLE_LOGGING" text="StorageAutoDrive: Diagnose-Logs ein/aus" />
-    </texts>
+    <text name="SAD_AD_BALE_STRAW_ROUND" text="Stroh – Rundballen" /><text name="SAD_AD_BALE_STRAW_SQUARE" text="Stroh – Quaderballen" /></texts>
 </l10n>

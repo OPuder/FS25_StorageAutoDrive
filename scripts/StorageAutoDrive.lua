@@ -1,5 +1,5 @@
 StorageAutoDrive = {}
-StorageAutoDrive.VERSION = "1.0.4.36"
+StorageAutoDrive.VERSION = "1.0.4.50"
 StorageAutoDrive.updateTimer = 0
 StorageAutoDrive.restoreRetryTimer = 0
 StorageAutoDrive.objectStorageSpawnHookInstalled = false
@@ -122,6 +122,9 @@ function StorageAutoDrive:onSavegameLoaded()
 end
 
 function StorageAutoDrive:update(dt)
+    -- Retry the narrowly scoped AD dropdown integration until the real AD environment is available.
+    if StorageAutoDriveADBaleIntegration ~= nil then StorageAutoDriveADBaleIntegration:update(dt) end
+
     if self.loggingActionEventId == nil then
         self:registerLoggingAction()
     end
