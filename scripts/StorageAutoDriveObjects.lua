@@ -65,6 +65,21 @@ end
 
 StorageAutoDriveObjects = {}
 
+-- Explizite Fahrzeug-XMLs der Mod FS25_PremiumPallets.
+-- Die Eintraege stammen aus deren modDesc.xml und den jeweiligen Paletten-XMLs.
+-- Es werden nur echte ObjectStorage-Objektdateien mit passendem FillType akzeptiert.
+local PREMIUM_PALLETS_FILES_BY_FILLTYPE = {
+    lime = {"xml/vapno.xml"},
+    fertilizer = {"xml/hnojivo.xml"},
+    oat = {"xml/kone.xml"},
+    manure = {"xml/manure.xml"},
+    mineral_feed = {"xml/mineral.xml"},
+    seeds = {"xml/osivo.xml"},
+    pigfood = {"xml/prasata.xml"},
+    wheat = {"xml/slepice.xml"},
+    roadsalt = {"xml/sul.xml"}
+}
+
 function StorageAutoDriveObjects:getObjectInfos(storage)
     StorageAutoDriveConfig:traceFunction("GENERAL", "StorageAutoDriveObjects:getObjectInfos")
     StorageAutoDriveConfig:heartbeat("OBJECTS", "object infos")
@@ -146,6 +161,20 @@ function StorageAutoDriveObjects:findObjectInfoForFillType(storage, fillTypeInde
     --    Genau dadurch können Garlic/Tomatoes/Lettuce usw. sauber unterschieden
     --    werden, obwohl getFillType() am gespeicherten AbstractObject UNKNOWN ist.
     local wantedFiles = {}
+
+    -- PremiumPallets registriert eigene Paletten-XMLs. Diese stehen nicht
+    -- zwingend in den palletFilename-Feldern des GIANTS-FillTypes.
+    -- Deshalb die belegten XML-Pfade zusaetzlich anhand des angeforderten
+    -- FillTypes pruefen; keine Dateisuche nur nach Namen und kein Fallback.
+    local premiumFiles = PREMIUM_PALLETS_FILES_BY_FILLTYPE[string.lower(tostring(wantedName or ""))]
+    if premiumFiles ~= nil then
+        for _, premiumFile in ipairs(premiumFiles) do
+            table.insert(wantedFiles, premiumFile)
+            cfg:debug("OBJECTS", "PremiumPallets-Dateikandidat fuer "
+                .. tostring(wantedName) .. "=" .. tostring(premiumFile))
+        end
+    end
+
     if g_fillTypeManager ~= nil and g_fillTypeManager.getFillTypeByIndex ~= nil then
         local fillType = g_fillTypeManager:getFillTypeByIndex(fillTypeIndex)
         if fillType ~= nil then
@@ -186,7 +215,8 @@ function StorageAutoDriveObjects:findObjectInfoForFillType(storage, fillTypeInde
             and info.objects[1] ~= nil then
             local filename = StorageAutoDriveUtils:getObjectFilename(info.objects[1])
             if filename ~= nil then
-                local lowerFilename = string.lower(tostring(filename))
+                local normalizedFilename = string.gsub(tostring(filename), "\\", "/")
+                local lowerFilename = string.lower(normalizedFilename)
                 for _, wantedFile in ipairs(wantedFiles) do
                     local lowerWantedFile = string.lower(tostring(wantedFile))
                     if lowerFilename == lowerWantedFile

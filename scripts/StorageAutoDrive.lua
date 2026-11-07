@@ -1,5 +1,5 @@
 StorageAutoDrive = {}
-StorageAutoDrive.VERSION = "1.0.4.50"
+StorageAutoDrive.VERSION = "1.0.4.52_PREMIUM_PALLETS"
 StorageAutoDrive.updateTimer = 0
 StorageAutoDrive.restoreRetryTimer = 0
 StorageAutoDrive.objectStorageSpawnHookInstalled = false
